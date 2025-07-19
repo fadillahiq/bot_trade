@@ -4,7 +4,7 @@ from discord_webhook import DiscordWebhook, DiscordEmbed
 
 MEXC_KLINE_URL = "https://api.mexc.com/api/v3/klines"
 PAIRS = ["DOGEUSDT", "XRPUSDT", "AAVEUSDT", "HYPEUSDT", "ETHUSDT", "PENGUUSDT"]
-WEBHOOK_URL = "https://discord.com/api/webhooks/1396241698929119273/9rzJbZXVoEgBWEZk69njsnFJe_whzG9av58lwBewII9owdqiP7-F0uDvM7f_DZzrh1Al"
+WEBHOOK_URL = "https://discord.com/api/webhooks/1396241622894907562/2Hpd4F4IAyUS9GQU4ybJoZXQMDRCsKEgnOo9d1OLdI8DOmewcwP-T1ntMmzi69TjIhNs"
 
 TIMEFRAMES = {
     "15m": "15m",
