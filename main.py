@@ -123,6 +123,15 @@ def analyze_signal(symbol, interval, direction):
 def send_to_discord(signal):
     try:
         webhook = DiscordWebhook(url=WEBHOOK_URL)
+        send_to_telegram(
+    message=f"🔥 *MASTER CALL: {signal['symbol']} – {signal['side']} [{signal['interval'].upper()}]*\n"
+            f"📍 Entry: {signal['entry']}\n"
+            f"🛑 SL: {signal['sl']}\n"
+            f"🎯 TP1: {signal['tp'][0]} | TP2: {signal['tp'][1]}\n"
+            f"✅ {signal['cta']}",
+    token="7580552170:AAEGs8Z4HVhZgtnzRaK4VctZe6_fUL0pkz8",
+    chat_id="5246334675"
+        )
         embed = DiscordEmbed(
             title=f"🔥 MASTER CALL: {signal['symbol']} – {signal['side']} [{signal['interval'].upper()}]",
             color="03b2f8"
@@ -139,6 +148,15 @@ def send_to_discord(signal):
     except Exception as e:
         print(f"Error sending Discord webhook: {e}")
         return None
+
+def send_to_telegram(message, token, chat_id):
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": message,
+        "parse_mode": "Markdown"
+    }
+    requests.post(url, data=payload)
 
 def main():
     print("Starting crypto signal bot...")
