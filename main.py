@@ -2,9 +2,11 @@ import time
 import requests 
 import os
 
-MEXC_KLINE_URL = "https://api.mexc.com/api/v3/klines" PAIRS = ["DOGEUSDT", "XRPUSDT", "AAVEUSDT", "HYPEUSDT", "ETHUSDT", "PENGUUSDT"]
+MEXC_KLINE_URL = "https://api.mexc.com/api/v3/klines" 
+PAIRS = ["DOGEUSDT", "XRPUSDT", "AAVEUSDT", "HYPEUSDT", "ETHUSDT", "PENGUUSDT"]
 
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") 
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 TIMEFRAMES = { "15m": "15m", "4h": "4h", "1d": "1d", "1w": "1w" }
 
