@@ -26,7 +26,8 @@ def detect_trend(symbol, interval):
     if not klines: 
         return None 
     closes = [float(k[4]) for k in klines] 
-    high = max(closes) low = min(closes) 
+    high = max(closes) 
+    low = min(closes) 
     last = closes[-1] 
     if last > high and closes[-2] <= high: 
         return "LONG" 
