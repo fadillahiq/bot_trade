@@ -69,7 +69,7 @@ elif direction == "SHORT":
         "tp": [round(fib_s1, 6), round(fib_s2, 6)],
         "cta": "🔻 Entry setelah breakdown. SL di atas swing high. TP bertahap."
     }
-return None
+    return None
 
 def send_to_telegram(signal):
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID: 
