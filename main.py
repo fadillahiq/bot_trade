@@ -1,12 +1,10 @@
-import time 
-import requests 
-import os
+import time
+import requests
+from discord_webhook import DiscordWebhook, DiscordEmbed
 
 MEXC_KLINE_URL = "https://api.mexc.com/api/v3/klines"
 PAIRS = ["DOGEUSDT", "XRPUSDT", "AAVEUSDT", "HYPEUSDT", "ETHUSDT", "PENGUUSDT"]
-
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+WEBHOOK_URL = "https://discord.com/api/webhooks/1396241698929119273/9rzJbZXVoEgBWEZk69njsnFJe_whzG9av58lwBewII9owdqiP7-F0uDvM7f_DZzrh1Al"
 
 TIMEFRAMES = {
     "15m": "15m",
@@ -15,10 +13,12 @@ TIMEFRAMES = {
     "1w": "1w"
 }
 
+
 def get_klines(symbol, interval="15m", limit=30):
     url = f"{MEXC_KLINE_URL}?symbol={symbol}&interval={interval}&limit={limit}"
     res = requests.get(url)
     return res.json()
+
 
 def analyze_trend(symbol, interval):
     try:
@@ -36,6 +36,7 @@ def analyze_trend(symbol, interval):
             return None
     except:
         return None
+
 
 def analyze_signal(symbol, interval, direction):
     try:
@@ -87,23 +88,21 @@ def analyze_signal(symbol, interval, direction):
     except:
         return None
 
-def send_to_telegram(signal):
-    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
-        return
-    message = (
-        f"🔥 MASTER CALL: {signal['symbol']} – {signal['side']} [{signal['interval'].upper()}]\n"
-        f"📍 Entry: {signal['entry']}\n"
-        f"🛑 SL: {signal['sl']}\n"
-        f"🎯 TP1: {signal['tp'][0]} | TP2: {signal['tp'][1]}\n"
-        f"✅ {signal['cta']}"
+
+def send_to_discord(signal):
+    webhook = DiscordWebhook(url=WEBHOOK_URL)
+    embed = DiscordEmbed(
+        title=f"🔥 MASTER CALL: {signal['symbol']} – {signal['side']} [{signal['interval'].upper()}]",
+        color="03b2f8"
     )
-    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": TELEGRAM_CHAT_ID,
-        "text": message,
-        "parse_mode": "Markdown"
-    }
-    requests.post(url, data=payload)
+    embed.add_embed_field(name="Entry", value=f"{signal['entry']:.6f}", inline=True)
+    embed.add_embed_field(name="Stop Loss", value=f"{signal['sl']:.6f}", inline=True)
+    embed.add_embed_field(name="Take Profit", value="\n".join(f"TP{i+1}: {tp:.6f}" for i, tp in enumerate(signal["tp"])), inline=False)
+    embed.add_embed_field(name="Confidence", value=signal["confidence"], inline=True)
+    embed.set_footer(text=signal["cta"])
+    webhook.add_embed(embed)
+    webhook.execute()
+
 
 def main():
     while True:
@@ -119,8 +118,10 @@ def main():
             if len(trends_filtered) >= 3 and trends_filtered.count(trends_filtered[0]) == len(trends_filtered):
                 signal = analyze_signal(sym, "15m", trends_filtered[0])
                 if signal:
-                    send_to_telegram(signal)
+                    send_to_discord(signal)
         time.sleep(300)
+
 
 if __name__ == "__main__":
     main()
+    
