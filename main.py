@@ -25,7 +25,21 @@ def detect_trend(symbol, interval):
     klines = get_klines(symbol, interval) 
     if not klines: 
         return None 
-    closes = [float(k[4]) for k in klines] 
+    
+    # Validate klines data structure
+    closes = []
+    for k in klines:
+        if isinstance(k, list) and len(k) >= 5:
+            try:
+                closes.append(float(k[4]))
+            except (ValueError, TypeError):
+                continue
+        else:
+            continue
+    
+    if len(closes) < 2:
+        return None
+        
     high = max(closes) 
     low = min(closes) 
     last = closes[-1] 
@@ -39,7 +53,21 @@ def calculate_signal(symbol, tf, direction):
     klines = get_klines(symbol, tf) 
     if not klines: 
         return None 
-    closes = [float(k[4]) for k in klines] 
+    
+    # Validate klines data structure
+    closes = []
+    for k in klines:
+        if isinstance(k, list) and len(k) >= 5:
+            try:
+                closes.append(float(k[4]))
+            except (ValueError, TypeError):
+                continue
+        else:
+            continue
+    
+    if len(closes) < 2:
+        return None
+        
     low = min(closes) 
     high = max(closes) 
     fib_05 = low + 0.5 * (high - low) 
@@ -49,27 +77,27 @@ def calculate_signal(symbol, tf, direction):
     fib_s1 = low - (high - low) 
     fib_s2 = low - 1.618 * (high - low)
 
-if direction == "LONG":
-    return {
-        "symbol": symbol,
-        "side": direction,
-        "interval": tf,
-        "entry": round(fib_05, 6),
-        "sl": round(low, 6),
-        "tp": [round(fib_ext1, 6), round(fib_ext2, 6)],
-        "cta": "✅ Entry di zona pullback 0.5 Fibo. SL di bawah swing low. TP bertahap."
-    }
-elif direction == "SHORT":
-    return {
-        "symbol": symbol,
-        "side": direction,
-        "interval": tf,
-        "entry": round(fib_shrt, 6),
-        "sl": round(high, 6),
-        "tp": [round(fib_s1, 6), round(fib_s2, 6)],
-        "cta": "🔻 Entry setelah breakdown. SL di atas swing high. TP bertahap."
-    }
-return None
+    if direction == "LONG":
+        return {
+            "symbol": symbol,
+            "side": direction,
+            "interval": tf,
+            "entry": round(fib_05, 6),
+            "sl": round(low, 6),
+            "tp": [round(fib_ext1, 6), round(fib_ext2, 6)],
+            "cta": "✅ Entry di zona pullback 0.5 Fibo. SL di bawah swing low. TP bertahap."
+        }
+    elif direction == "SHORT":
+        return {
+            "symbol": symbol,
+            "side": direction,
+            "interval": tf,
+            "entry": round(fib_shrt, 6),
+            "sl": round(high, 6),
+            "tp": [round(fib_s1, 6), round(fib_s2, 6)],
+            "cta": "🔻 Entry setelah breakdown. SL di atas swing high. TP bertahap."
+        }
+    return None
 
 def send_to_telegram(signal):
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID: 
@@ -105,4 +133,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
