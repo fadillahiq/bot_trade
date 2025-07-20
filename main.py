@@ -129,7 +129,7 @@ def main():
                 signal = calculate_signal(symbol, "15m", valid[0]) 
                 if signal: 
                     send_to_telegram(signal) 
-        time.sleep(300)  # cek tiap 5 menit
+        time.sleep(10)  # cek tiap 5 menit
 
 if __name__ == "__main__":
     main()
